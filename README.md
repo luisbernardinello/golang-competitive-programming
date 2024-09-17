@@ -9,13 +9,13 @@
 
 </h1>
 
-## What is this ? :shipit: :large_blue_circle: :wind_face:
+## What is this ? :ghost: :adhesive_bandage:
 
 "it’s a mind sport. It more fully develops your algorithmic reasoning skills and bridges the gap between theory and application in bite-sized chunks. Full participation develops problem solving intuition and competence" - Steven Halim in his book **Competitive Programming 4.**
 
 _In this repository you will see a collection of my competitive programming solutions in Rust_
 
-## :triangular_flag_on_post: Online Judges :triangular_flag_on_post:
+## :balloon: Online Judges :balloon:
 
 - #### [CodeWars](https://codewars.com/)
 - #### [BeeCrowd](https://www.beecrowd.com/)
@@ -29,7 +29,7 @@ _In this repository you will see a collection of my competitive programming solu
 
 <h4 align="center" style="display:flex; flex-direction: row; justify-content: center; align-items: center">
 
-<img src="https://socialify.git.ci/luisbernardinello/rust-competitive-programming/image?font=KoHo&language=1&name=1&owner=1&pattern=Solid&theme=Auto" alt="rust-competitive-programming" width="498" height="260" />
+<img src="https://socialify.git.ci/luisbernardinello/golang-competitive-programming/image?language=1&name=1&owner=1&pattern=Solid&theme=Auto" alt="golang-competitive-programming" width="498" height="260" />
 
 <p>
 Please leave a star ⭐
