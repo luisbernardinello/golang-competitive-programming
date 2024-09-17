@@ -52,13 +52,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +64,41 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
 func out(a ...interface{}) {
 	fmt.Fprintln(writer, a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
-
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
+func calcZeroOuUm(alice int, beto int, clara int) string {
+	if alice != beto && alice != clara {
+		return "A"
+	} else if beto != alice && beto != clara {
+		return "B"
+	} else if clara != alice && clara != beto {
+		return "C"
+	} else {
+		return "*"
 	}
-
-	return resultado
 }
 
 func solve() {
 	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+		// Lê os valores de A, B e C
+		aStr := next()
+		if aStr == "" {
+			break
 		}
+		alice := nextInt()
+		beto := nextInt()
+		clara := nextInt()
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
+		resultado := calcZeroOuUm(alice, beto, clara)
 
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
-		}
 
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+		out(resultado)
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -52,13 +53,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +65,45 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
 func out(a ...interface{}) {
 	fmt.Fprintln(writer, a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
+func calcImpedimento(distAtac []int, distDef []int) string {
+	sort.Ints(distDef)
+	sort.Ints(distAtac)
 
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
+	if distAtac[0] < distDef[1] {
+		return "Y"
 	}
-
-	return resultado
+	return "N"
 }
 
 func solve() {
 	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+		jogadores := nextInt()
+		defensores := nextInt()
+
+		if jogadores == 0 && defensores == 0 {
+			break
 		}
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
+		distanciaAtacantes := make([]int, jogadores)
+		for i := 0; i < jogadores; i++ {
+			distanciaAtacantes[i] = nextInt()
 		}
 
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+		distanciaDefensores := make([]int, defensores)
+		for i := 0; i < defensores; i++ {
+			distanciaDefensores[i] = nextInt()
+		}
+
+		impedido := calcImpedimento(distanciaAtacantes, distanciaDefensores)
+		out(impedido)
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

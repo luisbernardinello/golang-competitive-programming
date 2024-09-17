@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -52,13 +53,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +65,60 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
 func out(a ...interface{}) {
 	fmt.Fprintln(writer, a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
+func criaContador() (func(int), func() []int, func() map[int]int) {
+	valores := []int{}
+	contagem := map[int]int{}
 
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
+	addValor := func(valor int) {
+		valores = append(valores, valor)
+		sort.Ints(valores)
+		contagem[valor]++
 	}
 
-	return resultado
+
+	getValores := func() []int {
+		return valores
+	}
+
+	getContagem := func() map[int]int {
+		return contagem
+	}
+
+	return addValor, getValores, getContagem
 }
 
 func solve() {
-	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+	addValor, getValores, getContagem := criaContador()
+
+	casos := nextInt()
+
+	for i := 0; i < casos; i++ {
+		valor := nextInt()
+		addValor(valor)
+	}
+
+	writer.WriteString("Valores ordenados: ")
+	valores := getValores()
+	for i, val := range valores {
+		if i > 0 {
+			writer.WriteString(" ")
 		}
+		writer.WriteString(strconv.Itoa(val))
+	}
+	writer.WriteString("\n")
+	writer.Flush()
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
-		}
-
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+	
+	for numero, contagem := range getContagem() {
+		out(fmt.Sprintf("Número %d aparece %d vezes", numero, contagem))
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

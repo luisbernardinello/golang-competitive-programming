@@ -52,13 +52,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,8 +64,12 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
+func nextFloat64() float64 {
+	f, err := strconv.ParseFloat(next(), 64)
+	if err != nil {
+		panic(err)
+	}
+	return f
 }
 
 func out(a ...interface{}) {
@@ -80,39 +77,35 @@ func out(a ...interface{}) {
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
-
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
-	}
-
-	return resultado
-}
-
 func solve() {
 	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+		treinos := nextInt()
+
+		var duracaoTreino, distanciaTreino int
+		var recordeAtual float64
+		var diasRecorde []int
+
+		for i := 1; i <= treinos; i++ {
+			duracaoTreino = nextInt()
+			distanciaTreino = nextInt()
+			vm := float64(distanciaTreino) / float64(duracaoTreino)
+
+			if i == 1 || vm > recordeAtual {
+				recordeAtual = vm
+				diasRecorde = append(diasRecorde, i)
+			}
 		}
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
+		for _, dia := range diasRecorde {
+			out(dia)
 		}
 
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+		if reader.r.Buffered() == 0 {
+			break
+		}
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

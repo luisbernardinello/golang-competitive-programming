@@ -52,13 +52,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +64,46 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
-func out(a ...interface{}) {
-	fmt.Fprintln(writer, a...)
+func out(format string, a ...interface{}) {
+	fmt.Fprintf(writer, format+"\n", a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
+func fibo(n int) []int64 {
+	fibSequencia := make([]int64, n)
+	var F, ant int64
 
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
+	for i := 1; i <= n; i++ {
+		if i == 1 {
+			F = 1
+			ant = 0
+		} else {
+			F += ant
+			ant = F - ant
+		}
+
+		fibSequencia[i-1] = F
 	}
 
-	return resultado
+	return fibSequencia
 }
 
 func solve() {
-	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+	numero := nextInt()
+
+	vetor := fibo(numero)
+
+	for i := numero - 1; i >= 0; i-- {
+		out("%d", vetor[i])
+		if i > 0 {
+			writer.WriteString(" ")
 		}
-
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
-		}
-
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
 	}
+
+	writer.WriteString("\n")
+	writer.Flush()
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

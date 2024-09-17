@@ -52,13 +52,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +64,37 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
 func out(a ...interface{}) {
 	fmt.Fprintln(writer, a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
-
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
-	}
-
-	return resultado
-}
-
 func solve() {
-	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+	cases := nextInt()
+
+	for i := 0; i < cases; i++ {
+		scoreJoao, scoreMaria := 0, 0
+
+		for j := 0; j < 3; j++ {
+			pontuacao := nextInt()
+			distancia := nextInt()
+			scoreJoao += pontuacao * distancia
 		}
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
+		for j := 0; j < 3; j++ {
+			pontuacao := nextInt()
+			distancia := nextInt()
+			scoreMaria += pontuacao * distancia
 		}
 
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+		if scoreJoao > scoreMaria {
+			out("JOAO")
+		} else {
+			out("MARIA")
+		}
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

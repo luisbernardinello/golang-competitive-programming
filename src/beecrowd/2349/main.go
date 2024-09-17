@@ -52,13 +52,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +64,48 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
 func out(a ...interface{}) {
 	fmt.Fprintln(writer, a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
-
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
-	}
-
-	return resultado
-}
-
 func solve() {
-	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
-		}
+	estacoes := nextInt()
+	comandos := nextInt()
+	estacaoProx := nextInt()
+	posicaoAtual := 1
+	visitas := 0
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
-		}
-
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+	comandoSequencia := make([]int, comandos)
+	for i := 0; i < comandos; i++ {
+		comandoSequencia[i] = nextInt()
 	}
+
+	if posicaoAtual == estacaoProx {
+		visitas++
+	}
+
+	for _, comando := range comandoSequencia {
+		if comando == 1 {
+			posicaoAtual++
+			if posicaoAtual > estacoes {
+				posicaoAtual = 1
+			}
+		} else if comando == -1 {
+			posicaoAtual--
+			if posicaoAtual < 1 {
+				posicaoAtual = estacoes
+			}
+		}
+
+		if posicaoAtual == estacaoProx {
+			visitas++
+		}
+	}
+
+	out(visitas)
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

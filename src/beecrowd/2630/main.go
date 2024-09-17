@@ -52,13 +52,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +64,56 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
 func out(a ...interface{}) {
 	fmt.Fprintln(writer, a...)
 	writer.Flush()
 }
-
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
-
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
+func max(a, b, c int) int {
+	if a >= b && a >= c {
+		return a
 	}
+	if b >= a && b >= c {
+		return b
+	}
+	return c
+}
 
-	return resultado
+func min(a, b, c int) int {
+	if a <= b && a <= c {
+		return a
+	}
+	if b <= a && b <= c {
+		return b
+	}
+	return c
 }
 
 func solve() {
-	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+	cases := nextInt()
+
+	for i := 1; i <= cases; i++ {
+		metodo := next()
+		R := nextInt()
+		G := nextInt()
+		B := nextInt()
+
+		var P int
+
+		switch metodo {
+		case "eye":
+			P = int(0.3*float64(R) + 0.59*float64(G) + 0.11*float64(B))
+		case "mean":
+			P = (R + G + B) / 3
+		case "max":
+			P = max(R, G, B)
+		case "min":
+			P = min(R, G, B)
 		}
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
-		}
-
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+		out("Caso #", i, ":", P)
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

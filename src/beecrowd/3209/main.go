@@ -52,13 +52,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +64,36 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
-func out(a ...interface{}) {
-	fmt.Fprintln(writer, a...)
+func out(format string, a ...interface{}) {
+	fmt.Fprintf(writer, format+"\n", a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
-
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
+func calcTomadasFiltros(vet []int) int {
+	totalTomadas := 0
+	for _, tomadas := range vet {
+		totalTomadas += tomadas
 	}
-
-	return resultado
+	return totalTomadas - (len(vet) - 1)
 }
 
 func solve() {
-	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+	cases := nextInt()
+
+	for cases > 0 {
+		cases--
+
+		filtros := nextInt()
+		tomadas := make([]int, filtros)
+		for i := 0; i < filtros; i++ {
+			tomadas[i] = nextInt()
 		}
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
-
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
-		}
-
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+		resultado := calcTomadasFiltros(tomadas)
+		out("%d", resultado)
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }

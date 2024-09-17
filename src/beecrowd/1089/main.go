@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"container/ring"
 	"fmt"
 	"os"
 	"strconv"
@@ -52,13 +53,6 @@ func (r *bufReader) next() string {
 	return s
 }
 
-func (r *bufReader) nextLine() string {
-	r.readLine()
-	s := string(r.buf[r.i:])
-	r.i = len(r.buf)
-	return s
-}
-
 func next() string {
 	return reader.next()
 }
@@ -71,48 +65,51 @@ func nextInt() int {
 	return i
 }
 
-func nextLine() string {
-	return reader.nextLine()
-}
-
 func out(a ...interface{}) {
 	fmt.Fprintln(writer, a...)
 	writer.Flush()
 }
 
-// converte binário em ASCII
-func converteBinarioEmAsc(valores []string) string {
-	var resultado string
+func calcPico(r *ring.Ring) int {
+	picos := 0
+	current := r
 
-	for _, valor := range valores {
-		numDecimal, _ := strconv.ParseInt(valor, 2, 64)
-		char := string(rune(numDecimal))
-		resultado += char
+	for i := 0; i < r.Len(); i++ {
+		currentValue := current.Value.(int)
+		prevValue := current.Prev().Value.(int)
+		nextValue := current.Next().Value.(int)
+
+		if (currentValue > prevValue && currentValue > nextValue) ||
+			(currentValue < prevValue && currentValue < nextValue) {
+			picos++
+		}
+
+		current = current.Next()
 	}
 
-	return resultado
+	return picos
 }
 
 func solve() {
 	for {
-		var casosStr string
-		if _, err := fmt.Fscanf(reader.r, "%s\n", &casosStr); err != nil {
-			break // EOF
+		cases := nextInt()
+		if cases == 0 {
+			break
 		}
 
-		casos, _ := strconv.Atoi(casosStr)
-		valores := make([]string, casos)
+		r := ring.New(cases)
 
-		for i := 0; i < casos; i++ {
-			valores[i] = next()
+		for i := 0; i < cases; i++ {
+			value := nextInt()
+			r.Value = value
+			r = r.Next()
 		}
 
-		frase := converteBinarioEmAsc(valores)
-		out(frase)
+		resultado := calcPico(r)
+		out(resultado)
 	}
 }
 
 func main() {
 	solve()
-	//writer.Flush()
 }
