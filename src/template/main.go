@@ -1,145 +1,183 @@
-// This template is made by Luis Bernardinello  <luis.bernardinello@gmail.com>
-// GitHub : https://github.com/luisbernardinello
-
 package main
 
 import (
 	"bufio"
+	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
 )
 
-type IO struct {
+type bufReader struct {
 	r   *bufio.Reader
-	w   *bufio.Writer
-	buf []string
+	buf []byte
 	i   int
 }
 
-var io = &IO{
-	r: bufio.NewReaderSize(os.Stdin, 1<<20), // 1MB buffer
-	w: bufio.NewWriterSize(os.Stdout, 1<<20), 
+var reader = &bufReader{
+	bufio.NewReader(os.Stdin),
+	make([]byte, 0),
+	0,
 }
 
-func (io *IO) loadBuffer() {
-	if io.i < len(io.buf) {
+func (r *bufReader) readLine() {
+	if r.i < len(r.buf) {
 		return
 	}
-	io.i, io.buf = 0, nil
-	line, err := io.r.ReadString('\n')
-	if err != nil {
-		panic(err)
-	}
-
-	io.buf = strings.Fields(line)
-}
-
-func (io *IO) next() string {
-	io.loadBuffer()
-	token := io.buf[io.i]
-	io.i++
-	return token
-}
-
-func (io *IO) nextInt() int {
-	val, err := strconv.Atoi(io.next())
-	if err != nil {
-		panic(err)
-	}
-	return val
-}
-
-func (io *IO) nextFloat() float64 {
-	val, err := strconv.ParseFloat(io.next(), 64)
-	if err != nil {
-		panic(err)
-	}
-	return val
-}
-
-func (io *IO) print(a ...interface{}) {
-	for _, v := range a {
-		switch v := v.(type) {
-		case int:
-			io.w.WriteString(strconv.Itoa(v))
-		case float64:
-			io.w.WriteString(strconv.FormatFloat(v, 'f', 6, 64))
-		case string:
-			io.w.WriteString(v)
-		default:
-			panic("unsupported type")
+	r.buf = make([]byte, 0)
+	r.i = 0
+	for {
+		line, isPrefix, err := r.r.ReadLine()
+		if err != nil {
+			panic(err)
 		}
-		io.w.WriteByte(' ')
+		r.buf = append(r.buf, line...)
+		if !isPrefix {
+			break
+		}
 	}
-	io.w.WriteByte('\n')
 }
 
-func (io *IO) flush() {
-	io.w.Flush()
+func (r *bufReader) next() string {
+	r.readLine()
+	from := r.i
+	for ; r.i < len(r.buf); r.i++ {
+		if r.buf[r.i] == ' ' {
+			break
+		}
+	}
+	s := string(r.buf[from:r.i])
+	r.i++
+	return s
 }
 
-// AUX FUNCTIONS
+func (r *bufReader) nextLine() string {
+	r.readLine()
+	s := string(r.buf[r.i:])
+	r.i = len(r.buf)
+	return s
+}
 
-func max(x, y int) int {
+var writer = bufio.NewWriter(os.Stdout)
+
+func next() string {
+	return reader.next()
+}
+
+func nextInt64() int64 {
+	i, err := strconv.ParseInt(reader.next(), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
+func nextInt() int {
+	return int(nextInt64())
+}
+
+func nextLine() string {
+	return reader.nextLine()
+}
+
+func out(a ...interface{}) {
+	fmt.Fprintln(writer, a...)
+	writer.Flush()
+}
+
+func max64(x, y int64) int64 {
 	if x > y {
 		return x
 	}
 	return y
 }
 
-func min(x, y int) int {
+func max(x, y int) int {
+	return int(max64(int64(x), int64(y)))
+}
+
+func min64(x, y int64) int64 {
 	if x < y {
 		return x
 	}
 	return y
 }
 
-func abs(x int) int {
+func min(x, y int) int {
+	return int(min64(int64(x), int64(y)))
+}
+
+func abs64(x int64) int64 {
 	if x < 0 {
 		return -x
 	}
 	return x
 }
 
-func gcd(x, y int) int {
+func abs(x int) int {
+	return int(abs64(int64(x)))
+}
+
+func joinInt64s(a []int64, sep string) string {
+	b := make([]string, len(a))
+	for i, v := range a {
+		b[i] = strconv.FormatInt(v, 10)
+	}
+	return strings.Join(b, sep)
+}
+
+func joinInts(a []int, sep string) string {
+	b := make([]string, len(a))
+	for i, v := range a {
+		b[i] = strconv.Itoa(v)
+	}
+	return strings.Join(b, sep)
+}
+
+func divUp64(x, y int64) int64 {
+	return (x + y - 1) / y
+}
+
+func divUp(x, y int) int {
+	return int(divUp64(int64(x), int64(y)))
+}
+
+func gcd64(x, y int64) int64 {
+	if x < y {
+		x, y = y, x
+	}
 	for y != 0 {
 		x, y = y, x%y
 	}
 	return x
 }
 
+func gcd(x, y int) int {
+	return int(gcd64(int64(x), int64(y)))
+}
+
+func lcm64(x, y int64) int64 {
+	return x * y / gcd64(x, y)
+}
+
 func lcm(x, y int) int {
-	return x * y / gcd(x, y)
+	return int(lcm64(int64(x), int64(y)))
+}
+
+func pow64(x, y int64) int64 {
+	return int64(math.Pow(float64(x), float64(y)))
 }
 
 func pow(x, y int) int {
-	result := 1
-	for y > 0 {
-		if y&1 != 0 {
-			result *= x
-		}
-		x *= x
-		y >>= 1
-	}
-	return result
-}
-
-// YOUR CODE HERE
-
-func solve() {
-	// use cases
-	print("enter with two integers and two floats:\n")
-	n := io.nextInt()
-	m := io.nextInt()
-	f := io.nextFloat()
-	g := io.nextFloat()
-	print("the sum is:\n")
-	io.print("integer + integer =", n + m)
-	io.print("float + float =", f + g)
+	return int(pow64(int64(x), int64(y)))
 }
 
 func main() {
 	solve()
-	io.flush()
+	//writer.Flush()
+}
+
+func solve() {
+
 }
